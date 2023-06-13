@@ -181,6 +181,68 @@ public class HotelDB {
         }
     }
 
+
+
+
+
+
+
+    public boolean checkLogin(String username, String password) throws SQLException {
+        boolean result = false;
+        Connection myConn = null;
+        PreparedStatement myStmt = null;
+        ResultSet myRs = null;
+        try{
+            String url = "jdbc:mysql://localhost:3306/hotelbooking";
+            String us = "root";
+            String ps = "";
+            Class.forName("com.mysql.jdbc.Driver");
+            myConn = DriverManager.getConnection(url, us, ps);
+
+            String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+            PreparedStatement statement = myConn.prepareStatement(sql);
+            statement.setString(1, username);
+            statement.setString(2, password);
+
+            ResultSet resultSet = statement.executeQuery();
+            result = resultSet.next();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    public void register(User theUser) throws Exception {
+        Connection myConn = null;
+        PreparedStatement myStmt = null;
+
+        try{
+            String url = "jdbc:mysql://localhost:3306/hotelbooking";
+            String username = "root";
+            String password = "";
+            Class.forName("com.mysql.jdbc.Driver");
+            myConn = DriverManager.getConnection(url, username, password);
+
+            String sql = "insert into users" + "(username, password, full_name, email, phone)" + "values (?, ?, ?, ?, ?)";
+
+            myStmt = myConn.prepareStatement(sql);
+
+            myStmt.setString(1, theUser.getUsername());
+            myStmt.setString(2, theUser.getPassword());
+            myStmt.setString(3, theUser.getFullname());
+            myStmt.setString(4, theUser.getEmail());
+            myStmt.setString(5, theUser.getPhone());
+
+            myStmt.execute();
+        }
+        finally {
+            close(myConn, myStmt, null);
+        }
+    }
+
+
+
+
     public void updateBooking(Booking theBooking) throws Exception { //update cho admin
         Connection myConn = null;
         PreparedStatement myStmt = null;

@@ -1,6 +1,8 @@
 package HotelBookingSystem;
 
 public class User {
+
+
     public int getId() {
         return id;
     }
@@ -26,11 +28,11 @@ public class User {
     }
 
     public String getFullname() {
-        return fullname;
+        return full_name;
     }
 
     public void setFullname(String fullname) {
-        this.fullname = fullname;
+        this.full_name = fullname;
     }
 
     public String getEmail() {
@@ -52,15 +54,28 @@ public class User {
     private int id;
     private String username;
     private String password;
-    private String fullname;
+    private String full_name;
     private String email;
     private String phone;
     public User(int id,String username,String password,String fullname,String email,String phone){
         this.id = id;
         this.username = username;
         this.password = password;
-        this.fullname = fullname;
+        this.full_name = fullname;
         this.email = email;
         this.phone = phone;
+    }
+
+    public User(String username, String password, String fullname, String email, String phone) {
+        this.username = username;
+        this.password = password;
+        this.full_name = fullname;
+        this.email = email;
+        this.phone = phone;
+    }
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 }

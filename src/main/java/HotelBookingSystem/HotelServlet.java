@@ -4,10 +4,7 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
+import jakarta.servlet.http.*;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -15,6 +12,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.PublicKey;
 import java.util.List;
 
 @WebServlet("/HotelServlet")
@@ -24,7 +22,7 @@ public class HotelServlet extends HttpServlet {
 
     private HotelDB hotelDB;
     private List<Booking> bookingList;
-    @Resource(name="jdbc/hotel_booking_system")
+    @Resource(name="jdbc/hotelbooking")
     private DataSource dataSource;
 
     @Override
@@ -63,6 +61,12 @@ public class HotelServlet extends HttpServlet {
                 case "SEARCH":
                     searchHotel(request, response);
                     break;
+                case "REGISTER":
+                    register(request, response);
+                    break;
+                case "LOGOUT":
+                    logout(request, response);
+                    break;
                 default:
                     listHotels(request, response);
             }
@@ -90,8 +94,55 @@ public class HotelServlet extends HttpServlet {
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // TODO: Implement login functionality
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        boolean authenticated = false;
+
+        // Kiểm tra thông tin đăng nhập hợp lệ
+        if (username != null && password != null) {
+            authenticated = hotelDB.checkLogin(username, password);
+        }
+
+        if (authenticated) {
+            // Lưu thông tin người dùng vào phiên làm việc
+            HttpSession session = request.getSession();
+            session.setAttribute("username", username);
+
+            // Chuyển hướng người dùng đến trang chủ hoặc trang mà họ đã yêu cầu trước đó
+            String redirect = request.getParameter("redirect");
+            if (redirect != null) {
+                response.sendRedirect(redirect);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/HotelServlet");
+            }
+        } else {
+            // Nếu thông tin đăng nhập không hợp lệ, hiển thị thông báo lỗi
+            request.setAttribute("error", "Invalid username or password");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
+            dispatcher.forward(request, response);
+        }
     }
+
+    public void register(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String fullname = request.getParameter("fullname");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+
+        User theUser = new User(username, password, fullname, email, phone);
+        hotelDB.register(theUser);
+        response.sendRedirect(request.getContextPath() + "/HotelServlet");
+    }
+
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        response.sendRedirect(request.getContextPath() + "/HotelServlet");
+    }
+
 
     private void deleteBooking(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String bookingId = request.getParameter("bookingId");
