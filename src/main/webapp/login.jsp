@@ -14,22 +14,41 @@
 <% if (request.getAttribute("error") != null) { %>
 <p style="color: red;"><%= request.getAttribute("error") %></p>
 <% } %>
-
 <%-- Hiển thị biểu mẫu đăng nhập --%>
-<form method="POST" action="HotelServlet">
-	<input type="hidden" name="command" value="LOGIN">
-	<p>
-		<label for="username">Username:</label>
-		<input type="text" name="username" id="username">
-	</p>
-	<p>
-		<label for="password">Password:</label>
-		<input type="password" name="password" id="password">
-	</p>
-	<p>
-		<input type="submit" value="Login">
-	</p>
-	<h3>Don't have a account ? <a href="register.jsp">Sign up now!</a></h3>
-</form>
+<section class="ftco-section">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-md-6 text-center mb-5">
+			</div>
+		</div>
+		<div class="row justify-content-center">
+			<div class="col-md-6 col-lg-5">
+				<div class="login-wrap p-4 p-md-5">
+					<div class="icon d-flex align-items-center justify-content-center">
+						<span class="fa fa-user-o"></span>
+					</div>
+					<h3 class="text-center mb-4">Login</h3>
+					<form action="HotelServlet" method="POST" class="login-form">
+						<input type="hidden" name="command" value="LOGIN">
+						<div class="form-group">
+							<input type="text" name="username" id="username" class="form-control rounded-left" placeholder="Username" required>
+						</div>
+						<div class="form-group d-flex">
+							<input type="password" name="password" id="password" class="form-control rounded-left" placeholder="Password" required>
+						</div>
+						<div class="form-group d-md-flex">
+							<div class="w-75 text-md-right">
+								<a href="register.jsp">Don't have an account ? Sign up now</a>
+							</div>
+						</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary rounded submit p-3 px-5">Login</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
 </body>
 </html>
